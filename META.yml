@@ -1,0 +1,29 @@
+---
+name: HTML-Embellish
+version: 0.01
+author:
+  - 'Christopher J. Madsen <perl@cjmweb.net>'
+abstract: Typographically enhance HTML trees
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  HTML::Tree: 3.21
+  perl: 5.8.0
+build_requires:
+  File::Spec: 0
+  FindBin: 0
+  Module::Build: 0.21
+  Test::More: 0
+dynamic_config: 0
+provides:
+  HTML::Embellish:
+    file: lib/HTML/Embellish.pm
+    version: 0.01
+generated_by: Module::Build version 0.2805
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
+no_index:
+  file:
+    - My_Build.pm
