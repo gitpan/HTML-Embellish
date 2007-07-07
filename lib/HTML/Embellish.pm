@@ -5,7 +5,7 @@ package HTML::Embellish;
 #
 # Author: Christopher J. Madsen <perl@cjmweb.net>
 # Created: October 8, 2006
-# $Id: Embellish.pm 1834 2007-07-07 19:39:40Z cjm $
+# $Id: Embellish.pm 1838 2007-07-07 20:07:06Z cjm $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the same terms as Perl itself.
@@ -28,7 +28,7 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.01';  # Also update VERSION section in documentation
+our $VERSION = '0.02';  # Also update VERSION section in documentation
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -221,7 +221,7 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes HTML::Embellish version 0.01
+This document describes HTML::Embellish version 0.02
 
 
 =head1 SYNOPSIS

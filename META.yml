@@ -1,6 +1,6 @@
 ---
 name: HTML-Embellish
-version: 0.01
+version: 0.02
 author:
   - 'Christopher J. Madsen <perl@cjmweb.net>'
 abstract: Typographically enhance HTML trees
@@ -19,7 +19,7 @@ dynamic_config: 0
 provides:
   HTML::Embellish:
     file: lib/HTML/Embellish.pm
-    version: 0.01
+    version: 0.02
 generated_by: Module::Build version 0.2805
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
