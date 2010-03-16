@@ -1,4 +1,5 @@
-HTML::Embellish version 0.02
+HTML::Embellish version 0.03, released March 15, 2010
+
 
 HTML::Embellish adds typographical enhancements to HTML text.  It
 converts certain ASCII characters to Unicode characters.  It converts
@@ -13,22 +14,38 @@ INSTALLATION
 
 To install this module, run the following commands:
 
-    perl Build.PL
-    ./Build
-    ./Build test
-    ./Build install
+    perl Makefile.PL
+    make
+    make test
+    make install
 
 
 
 DEPENDENCIES
 
-HTML::Tree 3.21 or later
+  Package     Minimum Version
+  ----------- ---------------
+  perl         5.8.0
+  HTML::Tree   3.21
+
+
+
+CHANGES
+    Here's what's new in version 0.03 of HTML::Embellish:
+    (See the file "Changes" for the full revision history.)
+
+	- Make the (" and ") rules higher priority
+	- Use utf8::upgrade to avoid malformed UTF-8 bug
+	- Renamed curlyquote to processTextRefs (private method)
+	- Convert space to nbsp around ellipses when appropriate
+	- Add 'cause, 'cept, 'd, 'ee, 'er, 'fraid, 'im, 'm, 'n,
+	  'nother, 'r, 're, 's, 't, 'ud & 'un as special cases
 
 
 
 COPYRIGHT AND LICENSE
 
-Copyright 2007 Christopher J. Madsen
+This software is copyright (c) 2010 by Christopher J. Madsen.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

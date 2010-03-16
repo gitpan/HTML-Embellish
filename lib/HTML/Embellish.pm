@@ -1,11 +1,10 @@
 #---------------------------------------------------------------------
 package HTML::Embellish;
 #
-# Copyright 2007 Christopher J. Madsen
+# Copyright 2010 Christopher J. Madsen
 #
 # Author: Christopher J. Madsen <perl@cjmweb.net>
 # Created: October 8, 2006
-# $Id: Embellish.pm 1838 2007-07-07 20:07:06Z cjm $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the same terms as Perl itself.
@@ -15,20 +14,22 @@ package HTML::Embellish;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See either the
 # GNU General Public License or the Artistic License for more details.
 #
-# Typographically enhance HTML trees
+# ABSTRACT: Typographically enhance HTML trees
 #---------------------------------------------------------------------
 
-use 5.008;                      # Need good Unicode support
+use 5.008; # Need good Unicode support; Perl 5.10 recommended but 5.8 may work
 use warnings;
 use strict;
 use Carp qw(croak);
 
 use Exporter ();
 
+###open(LOG, '>:utf8', 'em.log');
+
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.02';  # Also update VERSION section in documentation
+our $VERSION = '0.03';
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -38,6 +39,7 @@ my $lsquo = chr(0x2018);
 my $rsquo = chr(0x2019);
 my $ldquo = chr(0x201C);
 my $rdquo = chr(0x201D);
+my $hellip = chr(0x2026);
 
 my $notQuote = qq/[^\"$ldquo$rdquo]/;
 my $balancedQuoteString = qq/(?: $notQuote | $ldquo $notQuote* $rdquo)*/;
@@ -49,7 +51,8 @@ my $balancedQuoteString = qq/(?: $notQuote | $ldquo $notQuote* $rdquo)*/;
 BEGIN
 {
   my $i = 0;
-  for (qw(textRefs fixQuotes fixDashes fixEllipses totalFields)) {
+  for (qw(textRefs fixQuotes fixDashes fixEllipses fixEllipseSpace fixHellip
+          totalFields)) {
     ## no critic (ProhibitStringyEval)
     eval "sub $_ () { $i }";
     ++$i;
@@ -89,6 +92,11 @@ sub new
   $self->[fixEllipses] = (exists $parms{ellipses} ? $parms{ellipses} : $def);
   $self->[fixQuotes]   = (exists $parms{quotes}   ? $parms{quotes}   : $def);
 
+  $self->[fixHellip]       = (exists $parms{hellip}
+                              ? $parms{hellip} : $self->[fixEllipses]);
+  $self->[fixEllipseSpace] = (exists $parms{space_ellipses}
+                              ? $parms{space_ellipses} : $self->[fixEllipses]);
+
   return $self;
 } # end new
 
@@ -99,56 +107,73 @@ sub new
 #   self:  The HTML::Embellish object
 #   refs:  Arrayref of stringrefs to the text of this paragraph
 
-sub curlyquote
+sub processTextRefs
 {
   my ($self, $refs) = @_;
 
   local $_ = join('', map { $$_ } @$refs);
+  utf8::upgrade($_);
 
-  s/^([\xA0\s]*)"/$1$ldquo/;
-  s/(?<=[\s\pZ])"(?=[^\s\pZ])/$ldquo/g;
-  s/(?<=\pP)"(?=\w)/$ldquo/g;
-  s/(?<=[ \t\n\r])"(?=\xA0)/$ldquo/g;
-  s/\("/($ldquo/g;
+  my $fixQuotes = $self->[fixQuotes];
+  if ($fixQuotes) {
+    s/\("/($ldquo/g;
+    s/"\)/$rdquo)/g;
 
-  s/"[\xA0\s]*$/$rdquo/;
-  s/(?<![\s\pZ])"(?=[\s\pZ])/$rdquo/g;
-  s/(?<=\w)"(?=\pP)/$rdquo/g;
-  s/(?<=\xA0)"(?=[ \t\n\r]|[\s\xA0]+$)/$rdquo/g;
-  s/"\)/$rdquo)/g;
-  s/(?<=[,;.!?])"(?=[-$mdash])/$rdquo/go;
+    s/^([\xA0\s]*)"/$1$ldquo/;
+    s/(?<=[\s\pZ])"(?=[^\s\pZ])/$ldquo/g;
+    s/(?<=\pP)"(?=\w)/$ldquo/g;
+    s/(?<=[ \t\n\r])"(?=\xA0)/$ldquo/g;
 
-  s/'(?=(?:em?|til|tisn?|twas)\b|\d\d\W?s)/$rsquo/ig;
+    s/"[\xA0\s]*$/$rdquo/;
+    s/(?<![\s\pZ])"(?=[\s\pZ])/$rdquo/g;
+    s/(?<=\w)"(?=\pP)/$rdquo/g;
+    s/(?<=\xA0)"(?=[ \t\n\r]|[\s\xA0]+$)/$rdquo/g;
+    s/(?<=[,;.!?])"(?=[-$mdash])/$rdquo/go;
 
-  s/`/$lsquo/g;
-  s/^'/$lsquo/;
-  s/(?<=[\s\pZ])'(?=[^\s\pZ])/$lsquo/g;
-  s/(?<=\pP)(?<![.!?])'(?=\w)/$lsquo/g;
-  s/(?<=[ \t\n\r])'(?=\xA0)/$lsquo/g;
+    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|im|m|n|nothers?|re?|s|t|til|tisn?|tw(?:asn?|ere?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
 
-  s/'/$rsquo/g;
+    s/'([ \xA0]?$rdquo)/$rsquo$1/go;
 
-  s/(?<!\PZ)"([\xA0\s]+$lsquo)/$ldquo$1/go;
-  s/(${rsquo}[\xA0\s]+)"(?!\PZ)/$1$rdquo/go;
+    s/`/$lsquo/g;
+    s/^'/$lsquo/;
+    s/(?<=[\s\pZ])'(?=[^\s\pZ])/$lsquo/g;
+    s/(?<=\pP)(?<![.!?])'(?=\w)/$lsquo/g;
+    s/(?<=[ \t\n\r])'(?=\xA0)/$lsquo/g;
 
-  1 while s/^($balancedQuoteString (?![\"$ldquo$rdquo])[ \t\n\r\pP]) "/$1$ldquo/xo
-      or  s/^($balancedQuoteString $ldquo $notQuote*) "/$1$rdquo/xo;
+    s/'/$rsquo/g;
 
-  s/${ldquo}\s([$lsquo$rsquo])/$ldquo\xA0$1/go;
-  s/${rsquo}\s$rdquo/$rsquo\xA0$rdquo/go;
+    s/(?<!\PZ)"([\xA0\s]+$lsquo)/$ldquo$1/go;
+    s/(${rsquo}[\xA0\s]+)"(?!\PZ)/$1$rdquo/go;
+
+    1 while s/^($balancedQuoteString (?![\"$ldquo$rdquo])[ \t\n\r\pP]) "/$1$ldquo/xo
+        or  s/^($balancedQuoteString $ldquo $notQuote*) "/$1$rdquo/xo;
+
+    #s/(?<=\p{IsPunct})"(?=\p{IsAlpha})/$ldquo/go;
+    s/(?<=[[:punct:]])"(?=[[:alpha:]])/$ldquo/go;
+
+    s/${ldquo}\s([$lsquo$rsquo])/$ldquo\xA0$1/go;
+    s/${rsquo}\s$rdquo/$rsquo\xA0$rdquo/go;
+  } # end if fixQuotes
+
+  if ($self->[fixEllipses]) {
+    s/( [\"$ldquo$lsquo] \.(?:\xA0\.)+ ) \s /$1\xA0/xog;
+    s/\s (?= \. (?:\xA0[.,!?])+ [$rdquo$rsquo\xA0\"]* $)/\xA0/xo;
+  }
 
   # Return the text to where it came from:
   #   This only works because the replacement text is always
   #   the same length as the original.
   foreach my $r (@$refs) {
     $$r = substr($_, 0, length($$r), '');
-    # Since the replacement text isn't the same length,
-    # these can't be done on the string as a whole:
-    $$r =~ s/(?<=[$ldquo$rdquo])(?=[$lsquo$rsquo])/\xA0/go;
-    $$r =~ s/(?<=[$lsquo$rsquo])(?=[$ldquo$rdquo])/\xA0/go;
-    $$r =~ s/(?<=[$ldquo$lsquo])\xA0(?=\.\xA0\.)//go;
+    if ($fixQuotes) {
+      # Since the replacement text isn't the same length,
+      # these can't be done on the string as a whole:
+      $$r =~ s/(?<=[$ldquo$rdquo])(?=[$lsquo$rsquo])/\xA0/go;
+      $$r =~ s/(?<=[$lsquo$rsquo])(?=[$ldquo$rdquo])/\xA0/go;
+      $$r =~ s/(?<=[$ldquo$lsquo])\xA0(?=\.\xA0\.)//go;
+    } # end if fixQuotes
   } # end foreach @$refs
-} # end curlyquote
+} # end processTextRefs
 
 #---------------------------------------------------------------------
 # Recursively process an HTML::Element tree:
@@ -160,9 +185,13 @@ sub process
   croak "HTML::Embellish->process must be passed an HTML::Element"
       unless ref $elt and $elt->can('content_refs_list');
 
-  my $isP = ($elt->tag =~ /^(?: p | h\d | d[dt] | div | blockquote )$/x);
+  my $parentRefs;
+  my $isP = ($elt->tag =~ /^(?: p | h\d | d[dt] | div | blockquote | title )$/x);
 
-  $self->[textRefs] = [] if $isP;
+  if ($isP and ($self->[fixQuotes] or $self->[fixEllipses])) {
+    $parentRefs = $self->[textRefs];
+    $self->[textRefs] = []
+  } # end if need to collect text refs
 
   my @content = $elt->content_refs_list;
 
@@ -185,10 +214,13 @@ sub process
       $self->process($$r);
     } else { # text node
       # Convert -- to em-dash:
+      utf8::upgrade($$r);
       if ($self->[fixDashes]) {
         $$r =~ s/(?<!-)---?(?!-)/$mdash/g; # &mdash;
         $$r =~ s/(?<!-)----(?!-)/$mdash$mdash/g;
       } # end if fixDashes
+
+      $$r =~ s/$hellip/.../go if $self->[fixHellip];
 
       # Fix ellipses:
       if ($self->[fixEllipses]) {
@@ -198,13 +230,30 @@ sub process
         $$r =~ s/(?:(?<=\w)|\A) (\.\xA0\.\xA0\.|\.\.\.)(?=[ \xA0\n\"\'?!$rsquo$rdquo])(?![ \xA0\n]+\w)/\xA0$1/go;
       } # end if fixEllipses
 
+      if ($self->[fixEllipseSpace]) {
+        $$r =~ s/(?<=\w) (\.(?:\xA0\.)+) (?=\w)/ $1 /gx;
+        $$r =~ s/(?<=\w[!?,;]) (\.(?:\xA0\.)+) (?=\w)/ $1 /gx;
+        $$r =~ s/( [\"$ldquo$lsquo] \.(?:\xA0\.)+ ) (?=\w) /$1\xA0/xog;
+        $$r =~ s/(?<=\w) (\.\xA0\.\xA0\.) (?![\xA0\w])/\xA0$1/gx;
+
+        if ($self->[textRefs] and @{$self->[textRefs]}) {
+          $$r =~ s/^(\.(?:\xA0\.)+) (?=\w)/ $1 /gx
+              if ${$self->[textRefs][-1]} =~ /\w[!?,;]?$/;
+
+          ${$self->[textRefs][-1]} =~ s/(?<=\w)\xA0(\.\xA0\.\xA0\.)$/ $1 /
+              if $$r =~ /^\w/;
+        }
+      } # end if fixEllipseSpace
+
       push @{$self->[textRefs]}, $r if $self->[textRefs];
     } # end else text node
   } # end foreach $r
 
   if ($isP and $self->[textRefs]) {
-    $self->curlyquote($self->[textRefs]) if $self->[fixQuotes];
-    $self->[textRefs] = undef;
+###    print LOG (map { utf8::is_utf8($$_) . "{$$_}" } @{ $self->[textRefs] }), "\n";
+    $self->processTextRefs($self->[textRefs]);
+    push @$parentRefs, @{$self->[textRefs]} if $parentRefs;
+    $self->[textRefs] = $parentRefs;
   } # end if this was a paragraph-like element
 } # end process
 
@@ -221,8 +270,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes HTML::Embellish version 0.02
-
+This document describes version 0.03 of
+HTML::Embellish, released March 15, 2010.
 
 =head1 SYNOPSIS
 
@@ -260,23 +309,34 @@ enhancements.  These are the (optional) flags that you can pass:
 
 =over
 
-=item dashes
+=item C<dashes>
 
 If true, converts sequences of hyphens into em-dashes.  Two or 3
 hyphens become one em-dash.  Four hyphens become two em-dashes.  Any
 other sequence of hyphens is not changed.
 
-=item ellipses
+=item C<ellipses>
 
 If true, inserts non-breaking spaces between the periods making up an
 ellipsis.  Also converts the space before an ellipsis that appears to
 end a sentence to a non-breaking space.
 
-=item quotes
+=item C<hellip>
+
+If true, converts the &hellip; character to 3 periods.  (To insert
+non-breaking spaces between them, also set C<ellipses> to true.)  This
+defaults to the value of C<ellipses>.
+
+=item C<space_ellipses>
+
+If true, adds whitespace around ellipses when necessary.  This
+defaults to the value of C<ellipses>.
+
+=item C<quotes>
 
 If true, converts quotation marks and apostrophes into curly quotes.
 
-=item default
+=item C<default>
 
 This is the default value used for flags that you didn't specify.  It
 defaults to 1 (enabled).  The main reason for using this flag is to
@@ -293,7 +353,6 @@ any sub-element to process just that part of the tree.  The tree is
 modified in-place; the return value is not meaningful.
 
 =back
-
 
 =head1 DIAGNOSTICS
 
@@ -314,11 +373,9 @@ style, so there must always be an even number of them.
 
 =back
 
-
 =head1 CONFIGURATION AND ENVIRONMENT
 
 HTML::Embellish requires no configuration files or environment variables.
-
 
 =head1 DEPENDENCIES
 
@@ -327,34 +384,48 @@ that implements the L<HTML::Element> interface).  Versions of HTML::Tree
 prior to 3.21 had some bugs involving Unicode characters and
 non-breaking spaces.
 
-
 =head1 INCOMPATIBILITIES
 
 None reported.
 
-
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
+I've experienced occasional segfaults when using this module with Perl
+5.8.8.  Since a pure-Perl module like this shouldn't be able to cause
+a segfault, I believe the issue is with Perl 5.8.  I recommend using
+Perl 5.10 if at all possible, as the files that segfaulted under 5.8.8
+worked fine with 5.10.
 
+
+=for Pod::Coverage
+^parDepth$
+^processTextRefs$
+^textRefs$
+^fixQuotes$
+^fixDashes$
+^fixEllipses$
+^fixEllipseSpace$
+^fixHellip$
+^totalFields$
 
 =head1 AUTHOR
 
-Christopher J. Madsen  C<< <perl AT cjmweb.net> >>
+Christopher J. Madsen  C<< <perl AT cjmweb.net> >>
 
 Please report any bugs or feature requests to
-S<< C<< <bug-HTML-Embellish AT rt.cpan.org> >> >>,
+C<< <bug-HTML-Embellish AT rt.cpan.org> >>,
 or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish>
 
+You can follow or contribute to HTML-Embellish's development at
+L<< http://github.com/madsen/html-embellish >>.
 
-=head1 LICENSE AND COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
-Copyright 2007 Christopher J. Madsen
+This software is copyright (c) 2010 by Christopher J. Madsen.
 
-This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
-
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =head1 DISCLAIMER OF WARRANTY
 
@@ -378,3 +449,5 @@ RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
 FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGES.
+
+=cut

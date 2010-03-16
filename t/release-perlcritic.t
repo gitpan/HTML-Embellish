@@ -1,6 +1,12 @@
 #! /usr/bin/perl
-#---------------------------------------------------------------------
-# $Id: perlcritic.t 1832 2007-07-07 18:21:37Z cjm $
+
+BEGIN {
+  unless ($ENV{RELEASE_TESTING}) {
+    require Test::More;
+    Test::More::plan(skip_all => 'these tests are for release candidate testing');
+  }
+}
+
 #---------------------------------------------------------------------
 
 use Test::More;

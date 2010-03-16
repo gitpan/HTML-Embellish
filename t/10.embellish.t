@@ -1,9 +1,7 @@
 #! /usr/bin/perl
 #---------------------------------------------------------------------
-# $Id: 10.embellish.t 1835 2007-07-07 19:40:39Z cjm $
-#---------------------------------------------------------------------
 
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 use HTML::Element;
 
@@ -65,6 +63,44 @@ $html = HTML::Element->new_from_lol($source_list);
 embellish($html, quotes => 1, default => 0);
 is(fmt($html), <<"", 'quotes only');
 <p>${ldquo}Here we have--in this string--some ${lsquo}characters${rsquo} ... to process.$rdquo</p>
+
+#---------------------------------------------------------------------
+$html = HTML::Element->new_from_lol(
+  [ blockquote =>
+    [ a => { href => "dest" }, qq!This isn't "wrong".! ],
+    [ blockquote => qq!It should 'work'.! ] ]
+);
+
+embellish($html);
+is(fmt($html), <<"", 'nested blockquotes');
+<blockquote><a href="dest">This isn${rsquo}t ${ldquo}wrong${rdquo}.</a><blockquote>It should ${lsquo}work${rsquo}.</blockquote></blockquote>
+
+#---------------------------------------------------------------------
+$html = HTML::Element->new_from_lol(
+  [ p => q!"Probably. 'If - '"! ]
+);
+
+embellish($html);
+is(fmt($html), <<"", 'Probably If');
+<p>${ldquo}Probably. ${lsquo}If - $rsquo$nb$rdquo</p>
+
+#---------------------------------------------------------------------
+$html = HTML::Element->new_from_lol(
+  [ p => q!"I'm quoting"--not quoted--"in part," he said.! ]
+);
+
+embellish($html);
+is(fmt($html), <<"", 'dash quote');
+<p>${ldquo}I${rsquo}m quoting${rdquo}${mdash}not quoted${mdash}${ldquo}in part,${rdquo} he said.</p>
+
+#---------------------------------------------------------------------
+$html = HTML::Element->new_from_lol(
+  [ p => q!She said, "'All the world's a stage,'"--and then--"nonsense."! ]
+);
+
+embellish($html);
+is(fmt($html), <<"", 'quoted quote dash');
+<p>She said, ${ldquo}$nb${lsquo}All the world${rsquo}s a stage,${rsquo}$nb${rdquo}${mdash}and then${mdash}${ldquo}nonsense.${rdquo}</p>
 
 #=====================================================================
 # Argument checking:
