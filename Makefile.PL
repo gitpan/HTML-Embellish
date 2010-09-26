@@ -2,37 +2,50 @@
 use strict;
 use warnings;
 
- BEGIN { require 5.8.0; } 
+BEGIN { require 5.8.0; }
 
-use ExtUtils::MakeMaker 6.11;
+use ExtUtils::MakeMaker 6.31;
 
 
 
 my %WriteMakefileArgs = (
-                       'test' => {
-                                   'TESTS' => 't/*.t'
-                                 },
-                       'NAME' => 'HTML::Embellish',
-                       'DISTNAME' => 'HTML-Embellish',
-                       'CONFIGURE_REQUIRES' => {
-                                                 'ExtUtils::MakeMaker' => '6.11'
-                                               },
-                       'AUTHOR' => 'Christopher J. Madsen <perl@cjmweb.net>',
-                       'BUILD_REQUIRES' => {
-                                             'Test::More' => '0'
-                                           },
-                       'ABSTRACT' => 'Typographically enhance HTML trees',
-                       'EXE_FILES' => [],
-                       'VERSION' => '0.03',
-                       'PREREQ_PM' => {
-                                        'HTML::Tree' => '3.21'
-                                      },
-                       'LICENSE' => 'perl'
-                     );
+  'ABSTRACT' => 'Typographically enhance HTML trees',
+  'AUTHOR' => 'Christopher J. Madsen <perl@cjmweb.net>',
+  'BUILD_REQUIRES' => {
+    'Test::More' => '0'
+  },
+  'CONFIGURE_REQUIRES' => {
+    'ExtUtils::MakeMaker' => '6.31'
+  },
+  'DISTNAME' => 'HTML-Embellish',
+  'EXE_FILES' => [],
+  'LICENSE' => 'perl',
+  'NAME' => 'HTML::Embellish',
+  'PREREQ_PM' => {
+    'HTML::Tree' => '3.21'
+  },
+  'VERSION' => '0.04',
+  'test' => {
+    'TESTS' => 't/*.t'
+  }
+);
 
 
-delete $WriteMakefileArgs{LICENSE}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.31) };
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
 
 WriteMakefile(%WriteMakefileArgs);
 

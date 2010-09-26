@@ -1,5 +1,11 @@
 Revision history for HTML::Embellish
 
+0.04   September 25, 2010
+	- Convert any whitespace between a period and an ending
+	  punctuation mark to &nbsp;
+	  (Previously, only an actual space was accepted)
+	- Fixed tests to work with HTML-Tree 4 (trailing whitespace issue)
+
 0.03   March 15, 2010
 	- Make the (" and ") rules higher priority
 	- Use utf8::upgrade to avoid malformed UTF-8 bug

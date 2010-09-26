@@ -29,7 +29,7 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -226,7 +226,7 @@ sub process
       if ($self->[fixEllipses]) {
         $$r =~ s/(?<!\.)\.\.\.([.?!;:,])(?!\.)/.\xA0.\xA0.\xA0$1/g;
         $$r =~ s/(?<!\.)\.\.\.(?!\.)/.\xA0.\xA0./g;
-        $$r =~ s/\. (?=[,.?!])/.\xA0/g;
+        $$r =~ s/(?<= \.) [^\PZ\x{200B}] (?=[.,?!])/\xA0/gx;
         $$r =~ s/(?:(?<=\w)|\A) (\.\xA0\.\xA0\.|\.\.\.)(?=[ \xA0\n\"\'?!$rsquo$rdquo])(?![ \xA0\n]+\w)/\xA0$1/go;
       } # end if fixEllipses
 
@@ -270,8 +270,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.03 of
-HTML::Embellish, released March 15, 2010.
+This document describes version 0.04 of
+HTML::Embellish, released September 25, 2010.
 
 =head1 SYNOPSIS
 
@@ -410,10 +410,10 @@ worked fine with 5.10.
 
 =head1 AUTHOR
 
-Christopher J. Madsen  C<< <perl AT cjmweb.net> >>
+Christopher J. Madsen  S<C<< <perl AT cjmweb.net> >>>
 
 Please report any bugs or feature requests to
-C<< <bug-HTML-Embellish AT rt.cpan.org> >>,
+S<C<< <bug-HTML-Embellish AT rt.cpan.org> >>>,
 or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish>
 

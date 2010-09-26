@@ -1,4 +1,4 @@
-HTML::Embellish version 0.03, released March 15, 2010
+HTML::Embellish version 0.04, released September 25, 2010
 
 
 HTML::Embellish adds typographical enhancements to HTML text.  It
@@ -31,15 +31,13 @@ DEPENDENCIES
 
 
 CHANGES
-    Here's what's new in version 0.03 of HTML::Embellish:
+    Here's what's new in version 0.04 of HTML::Embellish:
     (See the file "Changes" for the full revision history.)
 
-	- Make the (" and ") rules higher priority
-	- Use utf8::upgrade to avoid malformed UTF-8 bug
-	- Renamed curlyquote to processTextRefs (private method)
-	- Convert space to nbsp around ellipses when appropriate
-	- Add 'cause, 'cept, 'd, 'ee, 'er, 'fraid, 'im, 'm, 'n,
-	  'nother, 'r, 're, 's, 't, 'ud & 'un as special cases
+	- Convert any whitespace between a period and an ending
+	  punctuation mark to &nbsp;
+	  (Previously, only an actual space was accepted)
+	- Fixed tests to work with HTML-Tree 4 (trailing whitespace issue)
 
 
 
