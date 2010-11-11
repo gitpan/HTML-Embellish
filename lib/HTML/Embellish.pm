@@ -29,7 +29,7 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -42,7 +42,9 @@ my $rdquo = chr(0x201D);
 my $hellip = chr(0x2026);
 
 my $notQuote = qq/[^\"$ldquo$rdquo]/;
-my $balancedQuoteString = qq/(?: $notQuote | $ldquo $notQuote* $rdquo)*/;
+my $balancedQuoteString = qr/(?: (?>[^ \t\n\r\pP]+)
+                               | (?= [ \t\n\r\pP])$notQuote
+                               | $ldquo (?>$notQuote*) $rdquo )*/x;
 
 #=====================================================================
 # Constants:
@@ -145,8 +147,11 @@ sub processTextRefs
     s/(?<!\PZ)"([\xA0\s]+$lsquo)/$ldquo$1/go;
     s/(${rsquo}[\xA0\s]+)"(?!\PZ)/$1$rdquo/go;
 
-    1 while s/^($balancedQuoteString (?![\"$ldquo$rdquo])[ \t\n\r\pP]) "/$1$ldquo/xo
-        or  s/^($balancedQuoteString $ldquo $notQuote*) "/$1$rdquo/xo;
+    if (/"/) {
+      1 while s/^($balancedQuoteString (?![\"$ldquo$rdquo])[ \t\n\r\pP]) "
+               /$1$ldquo/xo
+          or  s/^($balancedQuoteString $ldquo $notQuote*) "/$1$rdquo/xo;
+    } # end if straight quotes remaining in string
 
     #s/(?<=\p{IsPunct})"(?=\p{IsAlpha})/$ldquo/go;
     s/(?<=[[:punct:]])"(?=[[:alpha:]])/$ldquo/go;
@@ -185,6 +190,8 @@ sub process
   croak "HTML::Embellish->process must be passed an HTML::Element"
       unless ref $elt and $elt->can('content_refs_list');
 
+  return if $elt->is_empty;
+
   my $parentRefs;
   my $isP = ($elt->tag =~ /^(?: p | h\d | d[dt] | div | blockquote | title )$/x);
 
@@ -193,6 +200,7 @@ sub process
     $self->[textRefs] = []
   } # end if need to collect text refs
 
+  $elt->normalize_content;
   my @content = $elt->content_refs_list;
 
   if ($self->[fixQuotes] and $self->[textRefs] and @content) {
@@ -270,8 +278,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.04 of
-HTML::Embellish, released September 25, 2010.
+This document describes version 0.05 of
+HTML::Embellish, released November 11, 2010.
 
 =head1 SYNOPSIS
 
@@ -418,7 +426,7 @@ or through the web interface at
 L<http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish>
 
 You can follow or contribute to HTML-Embellish's development at
-L<< http://github.com/madsen/html-embellish >>.
+git://github.com/madsen/html-embellish.git.
 
 =head1 COPYRIGHT AND LICENSE
 

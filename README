@@ -1,4 +1,4 @@
-HTML::Embellish version 0.04, released September 25, 2010
+HTML::Embellish version 0.05, released November 11, 2010
 
 
 HTML::Embellish adds typographical enhancements to HTML text.  It
@@ -31,13 +31,12 @@ DEPENDENCIES
 
 
 CHANGES
-    Here's what's new in version 0.04 of HTML::Embellish:
+    Here's what's new in version 0.05 of HTML::Embellish:
     (See the file "Changes" for the full revision history.)
 
-	- Convert any whitespace between a period and an ending
-	  punctuation mark to &nbsp;
-	  (Previously, only an actual space was accepted)
-	- Fixed tests to work with HTML-Tree 4 (trailing whitespace issue)
+	- Call normalize_content before processing an element node
+	- Try to avoid exceeding the complex regular subexpression
+	  recursion limit
 
 
 
