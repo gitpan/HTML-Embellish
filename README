@@ -1,4 +1,4 @@
-HTML::Embellish version 0.05, released November 11, 2010
+HTML::Embellish version 0.06, released November 11, 2011
 
 
 HTML::Embellish adds typographical enhancements to HTML text.  It
@@ -31,18 +31,16 @@ DEPENDENCIES
 
 
 CHANGES
-    Here's what's new in version 0.05 of HTML::Embellish:
+    Here's what's new in version 0.06 of HTML::Embellish:
     (See the file "Changes" for the full revision history.)
 
-	- Call normalize_content before processing an element node
-	- Try to avoid exceeding the complex regular subexpression
-	  recursion limit
+	- Add 'scuse as a special case
 
 
 
 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Christopher J. Madsen.
+This software is copyright (c) 2011 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

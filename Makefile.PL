@@ -2,31 +2,31 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.8.0; }
+use 5.008000;
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'Typographically enhance HTML trees',
-  'AUTHOR' => 'Christopher J. Madsen <perl@cjmweb.net>',
-  'BUILD_REQUIRES' => {
-    'Test::More' => '0.88'
+  "ABSTRACT" => "Typographically enhance HTML trees",
+  "AUTHOR" => "Christopher J. Madsen <perl\@cjmweb.net>",
+  "BUILD_REQUIRES" => {
+    "Test::More" => "0.88"
   },
-  'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31'
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
   },
-  'DISTNAME' => 'HTML-Embellish',
-  'EXE_FILES' => [],
-  'LICENSE' => 'perl',
-  'NAME' => 'HTML::Embellish',
-  'PREREQ_PM' => {
-    'HTML::Tree' => '3.21'
+  "DISTNAME" => "HTML-Embellish",
+  "EXE_FILES" => [],
+  "LICENSE" => "perl",
+  "NAME" => "HTML::Embellish",
+  "PREREQ_PM" => {
+    "HTML::Tree" => "3.21"
   },
-  'VERSION' => '0.05',
-  'test' => {
-    'TESTS' => 't/*.t'
+  "VERSION" => "0.06",
+  "test" => {
+    "TESTS" => "t/*.t"
   }
 );
 

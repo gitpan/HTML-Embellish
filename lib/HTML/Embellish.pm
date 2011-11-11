@@ -29,7 +29,7 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -132,7 +132,7 @@ sub processTextRefs
     s/(?<=\xA0)"(?=[ \t\n\r]|[\s\xA0]+$)/$rdquo/g;
     s/(?<=[,;.!?])"(?=[-$mdash])/$rdquo/go;
 
-    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|im|m|n|nothers?|re?|s|t|til|tisn?|tw(?:asn?|ere?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
+    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|im|m|n|nothers?|re?|s|scuse|t|til|tisn?|tw(?:asn?|ere?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
 
     s/'([ \xA0]?$rdquo)/$rsquo$1/go;
 
@@ -278,8 +278,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.05 of
-HTML::Embellish, released November 11, 2010.
+This document describes version 0.06 of
+HTML::Embellish, released November 11, 2011.
 
 =head1 SYNOPSIS
 
@@ -420,17 +420,17 @@ worked fine with 5.10.
 
 Christopher J. Madsen  S<C<< <perl AT cjmweb.net> >>>
 
-Please report any bugs or feature requests to
-S<C<< <bug-HTML-Embellish AT rt.cpan.org> >>>,
+Please report any bugs or feature requests
+to S<C<< <bug-HTML-Embellish AT rt.cpan.org> >>>
 or through the web interface at
-L<http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish>
+L<< http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish >>.
 
 You can follow or contribute to HTML-Embellish's development at
-git://github.com/madsen/html-embellish.git.
+L<< http://github.com/madsen/html-embellish >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Christopher J. Madsen.
+This software is copyright (c) 2011 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
