@@ -29,7 +29,8 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
+# This file is part of HTML-Embellish 0.07 (April 20, 2012)
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -132,7 +133,7 @@ sub processTextRefs
     s/(?<=\xA0)"(?=[ \t\n\r]|[\s\xA0]+$)/$rdquo/g;
     s/(?<=[,;.!?])"(?=[-$mdash])/$rdquo/go;
 
-    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|im|m|n|nothers?|re?|s|scuse|t|til|tisn?|tw(?:asn?|ere?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
+    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|gainst|im|m|n|nothers?|nuff|re?|rithmetic|s|scuse|spects?|t|til|tisn?|tw(?:asn?|ere?n?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
 
     s/'([ \xA0]?$rdquo)/$rsquo$1/go;
 
@@ -278,8 +279,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.06 of
-HTML::Embellish, released November 11, 2011.
+This document describes version 0.07 of
+HTML::Embellish, released April 20, 2012.
 
 =head1 SYNOPSIS
 
@@ -430,7 +431,7 @@ L<< http://github.com/madsen/html-embellish >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Christopher J. Madsen.
+This software is copyright (c) 2012 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
