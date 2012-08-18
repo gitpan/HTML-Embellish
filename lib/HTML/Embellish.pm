@@ -29,8 +29,8 @@ use Exporter ();
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.07';
-# This file is part of HTML-Embellish 0.07 (April 20, 2012)
+our $VERSION = '0.08';
+# This file is part of HTML-Embellish 0.08 (August 18, 2012)
 
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
@@ -133,7 +133,7 @@ sub processTextRefs
     s/(?<=\xA0)"(?=[ \t\n\r]|[\s\xA0]+$)/$rdquo/g;
     s/(?<=[,;.!?])"(?=[-$mdash])/$rdquo/go;
 
-    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|gainst|im|m|n|nothers?|nuff|re?|rithmetic|s|scuse|spects?|t|til|tisn?|tw(?:asn?|ere?n?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
+    s/'(?=(?:cause|cept|d|e[mr]?e?|fraidy?|gainst|im|m|n|nam|nothers?|nuff|re?|rithmetic|s|scuse|spects?|t|til|tisn?|tw(?:asn?|ere?n?|ould\w*)|ud|uns?)\b|\d\d\W?s|\d\d(?!\w))/$rsquo/ig;
 
     s/'([ \xA0]?$rdquo)/$rsquo$1/go;
 
@@ -279,8 +279,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.07 of
-HTML::Embellish, released April 20, 2012.
+This document describes version 0.08 of
+HTML::Embellish, released August 18, 2012.
 
 =head1 SYNOPSIS
 
