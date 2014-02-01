@@ -22,17 +22,16 @@ use warnings;
 use strict;
 use Carp qw(croak);
 
-use Exporter ();
+use Exporter 5.57 'import';     # exported import method
 
 ###open(LOG, '>:utf8', 'em.log');
 
 #=====================================================================
 # Package Global Variables:
 
-our $VERSION = '0.08';
-# This file is part of HTML-Embellish 0.08 (August 18, 2012)
+our $VERSION = '1.000';
+# This file is part of HTML-Embellish 1.000 (February 1, 2014)
 
-our @ISA    = qw(Exporter);
 our @EXPORT = qw(embellish);
 
 my $mdash = chr(0x2014);
@@ -279,8 +278,8 @@ HTML::Embellish - Typographically enhance HTML trees
 
 =head1 VERSION
 
-This document describes version 0.08 of
-HTML::Embellish, released August 18, 2012.
+This document describes version 1.000 of
+HTML::Embellish, released February 1, 2014.
 
 =head1 SYNOPSIS
 
@@ -427,11 +426,11 @@ or through the web interface at
 L<< http://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-Embellish >>.
 
 You can follow or contribute to HTML-Embellish's development at
-L<< http://github.com/madsen/html-embellish >>.
+L<< https://github.com/madsen/html-embellish >>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Christopher J. Madsen.
+This software is copyright (c) 2014 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

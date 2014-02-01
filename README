@@ -1,4 +1,4 @@
-HTML::Embellish version 0.08, released August 18, 2012
+HTML::Embellish version 1.000, released February 1, 2014
 
 
 HTML::Embellish adds typographical enhancements to HTML text.  It
@@ -26,21 +26,24 @@ DEPENDENCIES
   Package     Minimum Version
   ----------- ---------------
   perl         5.8.0
+  Carp         
+  Exporter     5.57
   HTML::Tree   3.21
 
 
 
 CHANGES
-    Here's what's new in version 0.08 of HTML::Embellish:
+    Here's what's new in version 1.000 of HTML::Embellish:
     (See the file "Changes" for the full revision history.)
 
-	- Add 'Nam as special case
+	- No functional changes
+	- Add a few more test cases
 
 
 
 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Christopher J. Madsen.
+This software is copyright (c) 2014 by Christopher J. Madsen.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

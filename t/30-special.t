@@ -14,10 +14,10 @@ binmode STDOUT, ':utf8';
 my $checkWarnings;
 BEGIN {
   # RECOMMEND PREREQ: Test::NoWarnings
-  $checkWarnings = eval { require Test::NoWarnings; 1 };
+  $checkWarnings = eval "require Test::NoWarnings; 1";
 }
 
-use HTML::Element;
+use HTML::Element 3.21;
 use HTML::Embellish;
 
 #=====================================================================
@@ -38,6 +38,7 @@ my $rsquo = chr(0x2019);
 
 my @tests = qw(
   '45
+  '80-five
   '90s
   'cause
   'cept
@@ -69,8 +70,10 @@ my @tests = qw(
   'tisn't
   'twas
   'twasn't
+  'twer
   'twere
   'tweren't
+  'twern't
   'twould
   'twouldn't
   'ud
